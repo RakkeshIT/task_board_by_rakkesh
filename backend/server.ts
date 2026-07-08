@@ -1,6 +1,7 @@
 import express from 'express'
 import dotenv from 'dotenv'
 import cors from 'cors'
+import { ConnectDB } from './config/db'
 dotenv.config()
 const app = express()
 
@@ -16,7 +17,13 @@ app.get('/', (req, res) => {
 })
 
 const PORT = process.env.PORT || 5000
-app.listen(PORT, () => {
-    console.log(`Server Start with PORT - ${PORT}`);
-    
-})
+
+async function StartServer() {
+    const dbConnected = await ConnectDB()
+    app.listen(PORT, () => {
+        console.log(`Server Start with PORT - ${PORT}`);
+        console.log("Is Db is Connected ? -> ", dbConnected ? "Connected": "No Fail");
+    })
+}
+
+StartServer()
