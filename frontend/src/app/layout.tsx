@@ -30,7 +30,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <ToastContainer position="top-right" autoClose={3000} closeButton={true}/>
-        <TopBar isConnected={true} onlineCount={3}/>
+        <TopBar/>
         <main className="flex-1 w-full px-3 sm:px-6 lg:px-8 bg-gray-100">
           {children}
         </main>
