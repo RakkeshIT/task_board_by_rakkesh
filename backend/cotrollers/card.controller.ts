@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import prisma from "../config/prisma";
+import { broadcastToAll } from "../config/websocket/websocketserver";
 
 export const getAllCards = async (req: Request, res: Response) => {
     try {
@@ -32,6 +33,10 @@ export const createCards = async (req: Request, res:Response) => {
                 position: position || 0
             }
         })
+        broadcastToAll({
+            type: "CARD_CREATED",
+            data: card
+        })
         res.status(201).json({ message: "Card Added!!!", success: true, data: card });
     } catch (error) {
         res.status(500).json({ message:"Card Added Failed",success: false, error: error });
@@ -61,6 +66,11 @@ export const updateCard = async (req: Request, res: Response) => {
             }
         })
         console.log("Updated Record: ", updatecard);
+        console.log("🎯 Broadcasting:", updatecard)
+        broadcastToAll({
+            type: "CARD_UPDATED",
+            data: updatecard
+        })
         res.status(200).json({message:"Record Updated", success: true, data: deleteCard})
     } catch (error) {
         res.status(200).json({message:"Record Updated Failed", success: false})
@@ -80,6 +90,11 @@ export const deleteCard = async (req: Request, res: Response) => {
             where: {id: Number(id)}
         })
         console.log("Deleted Record: ", deletedCard);
+
+        broadcastToAll({
+            type: "CARD_DELETED",
+            data: {id: Number(id)}
+        })
         res.status(200).json({message:"Record Deleted", success: true, data: deleteCard})
     } catch (error) {
         res.status(200).json({message:"Record Deleted Failed", success: false})

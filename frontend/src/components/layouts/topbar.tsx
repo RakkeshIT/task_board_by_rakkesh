@@ -1,18 +1,16 @@
 "use client";
 import Logo from '../assets/Logo.png'
 import Image from 'next/image';
-
+import { useWebSocket } from '@/websocket/useWebSocket';
 interface TopBarProps {
     boardName?: string;
-    isConnected: boolean;
-    onlineCount: number;
 }
+const WS_URL = process.env.NODE_ENV === "production" ? process.env.NEXT_PROD_WS_URL! : process.env.NEXT_PUBLIC_WS_URL!
 
 export default function TopBar({
     boardName = "Real-Time Task Board",
-    isConnected,
-    onlineCount,
 }: TopBarProps) {
+    const { isConnected, onlineCount} = useWebSocket(WS_URL)
     return (
         <header className="sticky top-0 z-50 border-b border-emerald-100 bg-white/70 backdrop-blur-md shadow-sm shadow-emerald-900/5">
     <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6">

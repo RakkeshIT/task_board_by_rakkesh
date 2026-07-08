@@ -8,6 +8,7 @@ import { ENDPOINT } from "@/service/endpoints";
 import DndProvider from "../dndProvider/DndProvider";
 import { toast } from "react-toastify";
 import { DropResult } from "@hello-pangea/dnd";
+import { useWebSocket } from "@/websocket/useWebSocket";
 
 interface Card {
     id: number;
@@ -21,12 +22,37 @@ const COLUMNS = [
     { id: "in_progress", title: "In Progress", status: "in_progress" },
     { id: "done", title: "Done", status: "done" },
 ];
+const WS_URL = process.env.NODE_ENV === "production" ? process.env.NEXT_PROD_WS_URL! : process.env.NEXT_PUBLIC_WS_URL!
 
 export default function Board() {
     const [cards, setCards] = useState<Card[]>([]);
     const [loading, setLoading] = useState(true);
-
+    const { lastMessage } = useWebSocket(WS_URL)
     // Initial load — fetch cards
+    useEffect(() => {
+        if (!lastMessage || !lastMessage.data) return;
+
+        switch (lastMessage.type) {
+            case "CARD_CREATED":
+                setCards((prev) => {
+                    const exists = prev.find((c) => c.id === lastMessage.data.id);
+                    if (exists) return prev;
+                    return [...prev, lastMessage.data];
+                });
+                break;
+
+            case "CARD_UPDATED":
+            case "CARD_MOVED":
+                setCards((prev) =>
+                    prev.map((c) => (c.id === lastMessage.data.id ? lastMessage.data : c))
+                );
+                break;
+
+            case "CARD_DELETED":
+                setCards((prev) => prev.filter((c) => c.id !== lastMessage.data.id));
+                break;
+        }
+    }, [lastMessage]);
     useEffect(() => {
         fetchCards();
     }, []);
@@ -49,12 +75,12 @@ export default function Board() {
 
     };
 
-    
-    const onDragEnd = useCallback((result: DropResult) => {
-        const {destination, source, draggableId} = result;
-        if(!destination) return;
 
-        if(destination.droppableId === source.droppableId && destination.index === source.index){
+    const onDragEnd = useCallback((result: DropResult) => {
+        const { destination, source, draggableId } = result;
+        if (!destination) return;
+
+        if (destination.droppableId === source.droppableId && destination.index === source.index) {
             return;
         }
         const CardId = Number(draggableId)
@@ -63,40 +89,40 @@ export default function Board() {
             const newCards = [...prev];
             const cardIndex = newCards.findIndex((c) => c.id === CardId);
             if (cardIndex === -1) return prev;
-      
+
             // Remove from old position
             const [movedCard] = newCards.splice(cardIndex, 1);
             movedCard.status = newStatus;
-      
+
             // Find insert position in new column
             const targetCards = newCards.filter((c) => c.status === newStatus);
             const insertBefore = targetCards[destination.index];
-      
+
             if (insertBefore) {
-              const insertIndex = newCards.findIndex((c) => c.id === insertBefore.id);
-              newCards.splice(insertIndex, 0, movedCard);
+                const insertIndex = newCards.findIndex((c) => c.id === insertBefore.id);
+                newCards.splice(insertIndex, 0, movedCard);
             } else {
-              newCards.push(movedCard);
+                newCards.push(movedCard);
             }
-      
+
             // Recalculate positions for target column
             return newCards.map((c) => {
-              if (c.status === newStatus) {
-                const columnCards = newCards.filter((x) => x.status === newStatus);
-                return { ...c, position: columnCards.indexOf(c) };
-              }
-              return c;
+                if (c.status === newStatus) {
+                    const columnCards = newCards.filter((x) => x.status === newStatus);
+                    return { ...c, position: columnCards.indexOf(c) };
+                }
+                return c;
             });
-          });
-      
-          apiService({
+        });
+
+        apiService({
             url: `${ENDPOINT.CARD.UPDATE}/${CardId}`,
             method: "PUT",
             data: { status: newStatus },
-          }).catch((err) => {
+        }).catch((err) => {
             console.error("Move failed:", err);
-            fetchCards(); 
-          });
+            fetchCards();
+        });
 
     }, [])
 
@@ -127,7 +153,7 @@ export default function Board() {
     const handleEdit = async (id: number, newTitle: string) => {
         setCards((prev) =>
             prev.map((c) => (c.id === id ? { ...c, title: newTitle } : c))
-          );
+        );
 
         try {
 
@@ -135,24 +161,24 @@ export default function Board() {
                 url: `${ENDPOINT.CARD.UPDATE}/${id}`,
                 method: "PUT",
                 data: {
-                    title: newTitle 
+                    title: newTitle
                 }
             })
 
             console.log("Response Updated: ", response);
             toast.success("Card Updated")
-            
+
         } catch (error) {
             console.log("Error for Update: ", error);
             fetchCards()
             toast.error("Something went wrong - from Board.tsx in edit functions")
-        }   
+        }
 
     };
 
     // Delete card
     const handleDelete = async (id: number) => {
-        
+
         try {
             const response = await apiService({
                 url: `${ENDPOINT.CARD.DELETE}/${id}`,

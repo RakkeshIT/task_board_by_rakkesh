@@ -4,12 +4,13 @@ import cors from 'cors'
 import { ConnectDB } from './config/db'
 // routers
 import createCard from './routes/card.route'
+import { initialzeWebSocket } from './config/websocket/websocketserver'
 
 dotenv.config()
 const app = express()
 
 app.use(cors({
-    origin:["http://localhost:3000"],
+    origin: ["http://localhost:3000"],
     credentials: true,
 }))
 
@@ -22,12 +23,10 @@ app.get('/', (req, res) => {
 app.use('/api', createCard)
 const PORT = process.env.PORT || 5000
 
-async function StartServer() {
+const server = app.listen(PORT, async () => {
     const dbConnected = await ConnectDB()
-    app.listen(PORT, () => {
-        console.log(`Server Start with PORT - ${PORT}`);
-        console.log("Is Db is Connected ? -> ", dbConnected ? "Connected": "No Fail");
-    })
-}
+    console.log(`Server Start with PORT - ${PORT}`);
+    console.log("Is Db is Connected ? -> ", dbConnected ? "Connected" : "No Fail");
+})
 
-StartServer()
+initialzeWebSocket(server)
