@@ -1,0 +1,25 @@
+### Create Card
+POST http://localhost:5000/api/create-card
+Content-Type: application/json
+
+{
+    "title": "Learn Postgreaql",
+    "status": "done",
+    "position": 3
+}
+
+### Fetch all cards
+POST http://localhost:5000/api/getall-card
+
+### Update cards
+PUT http://localhost:5000/api/updatecard/7
+Content-Type: application/json
+
+{
+    "title": "Learning completed",
+    "status": "todo",
+    "position": 6
+}
+
+### Delete cards
+DELETE http://localhost:5000/api/delete-card/5

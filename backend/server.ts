@@ -2,6 +2,9 @@ import express from 'express'
 import dotenv from 'dotenv'
 import cors from 'cors'
 import { ConnectDB } from './config/db'
+// routers
+import createCard from './routes/card.route'
+
 dotenv.config()
 const app = express()
 
@@ -15,7 +18,8 @@ app.use(express.json())
 app.get('/', (req, res) => {
     res.send("Hello Server is Start")
 })
-
+// API's
+app.use('/api', createCard)
 const PORT = process.env.PORT || 5000
 
 async function StartServer() {
