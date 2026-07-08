@@ -10,10 +10,10 @@ dotenv.config()
 const app = express()
 
 app.use(cors({
-    origin: ["http://localhost:3000","https://task-borad-woad.vercel.app/cards"],
+    origin: ["http://localhost:3000","https://task-borad-woad.vercel.app","https://task-borad-by-rakkesh.vercel.app"],
     credentials: true,
 }))
-
+// app.options("*", cors());
 app.use(express.json())
 
 app.get('/', (req, res) => {
