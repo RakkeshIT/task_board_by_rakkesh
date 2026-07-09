@@ -4,7 +4,8 @@ const api = axios.create({
     baseURL: process.env.NODE_ENV === "production" ? process.env.NEXT_PUBLIC_PROD_URL : process.env.NEXT_PUBLIC_LOCAL_URL,
     headers: {
         'Content-Type': 'application/json'
-    }
+    },
+    withCredentials: true
 })
 
 console.log(process.env.NEXT_PUBLIC_LOCAL_URL);
