@@ -139,7 +139,7 @@ export default function Board() {
             console.log("Response: ", response);
             const newCard = response.data || response
 
-            setCards((prev) => [...prev, newCard])
+            // setCards((prev) => [...prev, newCard])
 
             toast.success("Todo Added")
 
