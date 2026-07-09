@@ -22,9 +22,10 @@ app.use(cors({
 
 app.use(express.json())
 
-app.get('/', (req, res) => {
+app.get('/', (req: express.Request, res: express.Response) => {
     res.send("Hello Server is Start")
 })
+
 // API's
 app.use('/api', createCard)
 const PORT = process.env.PORT || 5000

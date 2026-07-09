@@ -60,7 +60,7 @@ export function initializeWebSocket(httpserver: Server){
             
         })
         
-        ws.on('error', (err) => {
+        ws.on('error', (err: Error) => {
             console.log("Websocket Error: ", err);
             
         })
