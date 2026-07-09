@@ -162,6 +162,13 @@ Neon PostgreSQL
 
 ---
 
+#NOTE
+- You want to use your OWN Neon DB Please change DATABASE_URL from .env file.
+- You get DATABASE_URL from neon Dashboard.
+- Link - https://neon.com/
+- Sign-up Your account and create new project and create new database and get new Connection String like - postgresql://neondb_owner************
+- If any queries please contact owner - rakkeshit@gmail.com
+
 # ✨ Features
 
 - Realtime synchronization using WebSockets
