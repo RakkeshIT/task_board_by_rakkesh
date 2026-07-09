@@ -5,7 +5,7 @@ import { useWebSocket } from '@/websocket/useWebSocket';
 interface TopBarProps {
     boardName?: string;
 }
-const WS_URL = process.env.NODE_ENV === "production" ? process.env.NEXT_PUBLIC_PROD_WS_URL! : process.env.NEXT_PUBLIC_WS_URL!
+const WS_URL = process.env.NODE_ENV === "production" ? process.env.NEXT_PUBLIC_WS_URL! : process.env.NEXT_PUBLIC_LOCAL_WS_URL!
 
 export default function TopBar({
     boardName = "Real-Time Task Board",
