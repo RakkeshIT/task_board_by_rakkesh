@@ -24,7 +24,7 @@ export interface WSEvent {
     senderId?: string
 }
 
-export function initialzeWebSocket(httpserver: Server){
+export function initializeWebSocket(httpserver: Server){
     const wss = new WebSocketServer({server: httpserver})
 
     wss.on('connection', (ws: WebSocket) => {
@@ -93,7 +93,7 @@ export function broadcastToAll(event: WSEvent) {
 
 export function sendPresence() {
     const count = client.size
-    
+
     broadcastToAll({
         type: "PRESENCE",
         data: { count }

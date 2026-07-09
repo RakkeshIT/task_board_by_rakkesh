@@ -4,16 +4,20 @@ import cors from 'cors'
 import { ConnectDB } from './config/db'
 // routers
 import createCard from './routes/card.route'
-import { initialzeWebSocket } from './config/websocket/websocketserver'
+import { initializeWebSocket } from './config/websocket/websocketserver'
 
 dotenv.config()
 const app = express()
 
+const allowedOrigins = process.env.NODE_ENV === 'production' 
+    ? ["https://task-borad-woad.vercel.app"]
+    : ["http://localhost:3000"];
+
 app.use(cors({
-    origin: ["http://localhost:3000","https://task-borad-woad.vercel.app","https://task-borad-by-rakkesh.vercel.app"],
+    origin: allowedOrigins,
     credentials: true,
-}))
-// app.options("*", cors());
+}));
+
 app.use(express.json())
 
 app.get('/', (req, res) => {
@@ -29,4 +33,4 @@ const server = app.listen(PORT, async () => {
     console.log("Is Db is Connected ? -> ", dbConnected ? "Connected" : "No Fail");
 })
 
-initialzeWebSocket(server)
+initializeWebSocket(server)
