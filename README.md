@@ -54,7 +54,7 @@ Make sure you have installed:
 # 📥 Clone Repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/RakkeshIT/task_board_by_rakkesh.git
 cd task_board_by_rakkesh
 ```
 
